@@ -362,6 +362,13 @@ p{ margin:0 0 1em; color:var(--text-muted); }
   position:absolute; inset:0; z-index:1;
   background:linear-gradient(180deg, rgba(15,8,3,.6) 0%, rgba(15,8,3,.42) 40%, rgba(15,8,3,.86) 100%);
 }
+/* flat, always-on tint sitting between the animated background and the text,
+   so copy stays legible no matter which slideshow frame or particle is behind it */
+.hero__tint{
+  position:absolute; inset:0; z-index:1;
+  background:rgba(8,5,2,0.4);
+  pointer-events:none;
+}
 /* rising steam wisps — soft, blurred, food-fresh-off-the-fire feel */
 .steam-field{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
 .steam{
@@ -424,6 +431,20 @@ p{ margin:0 0 1em; color:var(--text-muted); }
 .stat{ text-align:center; }
 .stat__num{ display:block; font-family:var(--font-display); font-size:2rem; font-weight:700; color:var(--sand); }
 .stat__label{ font-size:.78rem; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,248,242,0.7); }
+
+/* ---------- milestones / "9 Years of Excellence" ---------- */
+.milestones{ position:relative; overflow:hidden; color:#fff; }
+.milestones__bg{ position:absolute; inset:0; z-index:0; }
+.milestones__bg img{ width:100%; height:100%; object-fit:cover; }
+.milestones__bg::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(120deg, rgba(15,8,3,.92) 0%, rgba(92,0,0,.82) 100%);
+}
+.milestones__inner{ position:relative; z-index:1; }
+.milestones__head{ max-width:640px; margin:0 auto 3rem; text-align:center; }
+.milestones__head h2{ color:#fff; font-size:clamp(1.8rem,3.2vw,2.5rem); }
+.milestones__head p{ color:rgba(255,248,242,0.82); }
+.milestones .hero__stats{ border-top-color:rgba(255,255,255,0.22); }
 
 .scroll-cue{
   position:absolute; bottom:28px; left:50%; transform:translateX(-50%); z-index:2;
@@ -597,6 +618,7 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
   background:transparent; color:#fff; font-size:1.1rem; transition:all var(--dur-fast) var(--ease);
 }
 .carousel-btn:hover{ background:var(--gold); border-color:var(--gold); color:#221600; }
+.carousel-btn--light{ border-color:var(--border); color:var(--text); }
 .popular__track-wrap{ overflow-x:auto; scroll-snap-type:x mandatory; padding:1rem 0 1rem 24px; scrollbar-width:none; }
 .popular__track-wrap::-webkit-scrollbar{ display:none; }
 .popular__track{ display:flex; gap:1.6rem; width:max-content; padding-right:24px; }
@@ -651,41 +673,132 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
 .timer small{ font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,248,242,0.7); }
 
 /* ---------- testimonials ---------- */
-.t-slider{ position:relative; overflow:hidden; }
-.t-track{ display:flex; transition:transform var(--dur-slow) var(--ease); }
+.t-slider{ position:relative; }
+.t-track{
+  display:flex; gap:1.6rem; overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none; padding:.5rem 4px 1.6rem; scroll-behavior:smooth;
+}
+.t-track::-webkit-scrollbar{ display:none; }
 .t-card{
-  flex:0 0 100%; border-radius:var(--radius-lg); padding:2.6rem; box-shadow:var(--shadow-md);
-  display:flex; flex-direction:column; gap:1.2rem; max-width:640px; margin:0 auto;
+  flex:0 0 auto; width:min(560px,86vw); scroll-snap-align:start;
+  border-radius:var(--radius-lg); padding:2.6rem; box-shadow:var(--shadow-md);
+  display:flex; flex-direction:column; gap:1.2rem;
 }
 .t-card__stars{ color:var(--gold); letter-spacing:.15em; }
 .t-card p{ font-family:var(--font-display); font-style:italic; font-size:1.25rem; color:var(--text); margin:0; }
 .t-card__person{ display:flex; align-items:center; gap:.8rem; }
 .t-card__person img{ width:46px; height:46px; border-radius:50%; object-fit:cover; }
 .t-card__person small{ color:var(--text-muted); font-size:.78rem; }
-.t-dots{ display:flex; justify-content:center; gap:.5rem; margin-top:2rem; }
-.t-dots button{
-  width:9px; height:9px; border-radius:50%; background:var(--border); border:none; padding:0;
-  transition:all var(--dur-fast) var(--ease);
-}
-.t-dots button.is-active{ background:var(--wine); width:26px; border-radius:6px; }
+.t-slider__nav{ display:flex; justify-content:center; gap:.6rem; margin-top:.5rem; }
 
 /* ---------- gallery ---------- */
-.gallery__masonry{
-  column-count:3; column-gap:1.2rem; margin-top:1rem;
-}
+.gallery__track-wrap{ overflow-x:auto; scroll-snap-type:x mandatory; padding:1rem 0 1rem 24px; scrollbar-width:none; }
+.gallery__track-wrap::-webkit-scrollbar{ display:none; }
+.gallery__track{ display:flex; gap:1.4rem; width:max-content; padding-right:24px; }
 .gallery__item{
-  display:block; width:100%; border:none; padding:0; margin-bottom:1.2rem; border-radius:var(--radius-md);
-  overflow:hidden; break-inside:avoid; position:relative; cursor:zoom-in; box-shadow:var(--shadow-sm);
+  display:block; flex:0 0 auto; width:min(340px,72vw); scroll-snap-align:start;
+  border:none; padding:0; border-radius:var(--radius-md);
+  overflow:hidden; position:relative; cursor:zoom-in; box-shadow:var(--shadow-sm);
 }
-.gallery__item img{ width:100%; transition:transform .5s var(--ease), filter .5s var(--ease); }
-.gallery__item:nth-child(odd) img{ aspect-ratio:4/5; object-fit:cover; }
-.gallery__item:nth-child(even) img{ aspect-ratio:1/1; object-fit:cover; }
+.gallery__item img{ width:100%; height:100%; aspect-ratio:4/5; object-fit:cover; transition:transform .5s var(--ease); }
 .gallery__item:hover img{ transform:scale(1.07); }
 .gallery__item::after{
   content:'⤢'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   color:#fff; font-size:1.6rem; background:rgba(10,6,2,0); opacity:0; transition:all var(--dur-fast) var(--ease);
 }
 .gallery__item:hover::after{ opacity:1; background:rgba(10,6,2,0.28); }
+
+/* ---------- chef video ---------- */
+.chef-video__grid{ display:grid; grid-template-columns:1fr 1fr; gap:3.5rem; align-items:center; }
+.chef-video__copy h2{ font-size:clamp(1.7rem,3vw,2.3rem); }
+.chef-video__facts{ display:flex; flex-direction:column; gap:.6rem; margin-top:1.2rem; }
+.chef-video__facts li{ position:relative; padding-left:1.6rem; font-size:.9rem; color:var(--text-muted); }
+.chef-video__facts li::before{ content:'✓'; position:absolute; left:0; color:var(--gold); font-weight:700; }
+.chef-video__player{
+  position:relative; display:block; width:100%; aspect-ratio:16/10; border:none; padding:0;
+  border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; box-shadow:var(--shadow-lg);
+}
+.chef-video__player img{ width:100%; height:100%; object-fit:cover; transition:transform .6s var(--ease); }
+.chef-video__player:hover img{ transform:scale(1.06); }
+.chef-video__player::before{
+  content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,6,2,.15), rgba(10,6,2,.55));
+}
+.chef-video__play-btn{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:76px; height:76px; border-radius:50%; background:rgba(255,248,242,0.92); color:var(--wine);
+  display:flex; align-items:center; justify-content:center; font-size:1.5rem; padding-left:5px;
+  box-shadow:0 0 0 0 rgba(255,248,242,0.6); animation:playPulse 2.4s ease-out infinite;
+}
+@keyframes playPulse{
+  0%{ box-shadow:0 0 0 0 rgba(255,248,242,0.45); }
+  70%{ box-shadow:0 0 0 22px rgba(255,248,242,0); }
+  100%{ box-shadow:0 0 0 0 rgba(255,248,242,0); }
+}
+.chef-video__label{
+  position:absolute; left:1.4rem; bottom:1.4rem; color:#fff; font-size:.82rem; font-weight:600;
+  background:rgba(10,6,2,0.5); padding:.4em .9em; border-radius:var(--radius-pill);
+}
+
+/* ---------- call to action banner ---------- */
+.cta-banner{ position:relative; overflow:hidden; color:#fff; text-align:center; padding:clamp(3.4rem,6vw,5.5rem) 0; }
+.cta-banner__bg{ position:absolute; inset:0; z-index:0; }
+.cta-banner__bg img{ width:100%; height:100%; object-fit:cover; }
+.cta-banner__bg::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(120deg, rgba(15,8,3,.9) 0%, rgba(139,0,0,.8) 100%);
+}
+.cta-banner__inner{ position:relative; z-index:1; max-width:700px; margin:0 auto; }
+.cta-banner__inner h2{ color:#fff; font-size:clamp(1.8rem,3.4vw,2.5rem); margin-bottom:.6em; }
+.cta-banner__inner > p{ color:rgba(255,248,242,0.85); max-width:520px; margin:0 auto 0; }
+.cta-banner__actions{ display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin:1.8rem 0 1.6rem; }
+.cta-banner__meta{ display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; font-size:.85rem; color:rgba(255,248,242,0.75); }
+
+/* ---------- tradition & modern tech ---------- */
+.tech__grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.6rem; }
+
+/* ---------- delivery partners ---------- */
+.delivery-partners{ background:var(--surface-2); }
+.partners__grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.4rem; }
+.partner-badge{
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:.4rem;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:2rem 1.2rem; box-shadow:var(--shadow-sm);
+  transition:transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.partner-badge:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:var(--gold); }
+.partner-badge__icon{ font-size:1.9rem; margin-bottom:.3rem; }
+.partner-badge strong{ font-family:var(--font-display); font-size:1.05rem; color:var(--text); }
+.partner-badge small{ color:var(--text-muted); font-size:.78rem; }
+
+/* ---------- app download promo ---------- */
+.app-promo{
+  background:linear-gradient(120deg, var(--ink) 0%, #2b1c0c 100%); color:#fff; position:relative; overflow:hidden;
+}
+.app-promo::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 12% 30%, rgba(184,134,11,0.28), transparent 55%);
+}
+.app-promo__inner{ position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:3rem; flex-wrap:wrap; }
+.app-promo__copy{ max-width:480px; }
+.app-promo__copy h2{ color:#fff; font-size:clamp(1.7rem,3vw,2.3rem); }
+.app-promo__copy p{ color:rgba(255,248,242,0.8); }
+.app-promo__form{ display:flex; gap:.7rem; margin:1.4rem 0 1.2rem; flex-wrap:wrap; }
+.app-promo__form input{
+  flex:1; min-width:220px; border:1.5px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.08);
+  border-radius:var(--radius-pill); padding:.85em 1.2em; color:#fff; font-size:.9rem;
+}
+.app-promo__form input::placeholder{ color:rgba(255,248,242,0.5); }
+.store-badges{ display:flex; gap:.8rem; flex-wrap:wrap; }
+.store-badge{
+  border:1px solid rgba(255,255,255,0.25); border-radius:var(--radius-pill); padding:.5em 1.1em;
+  font-size:.78rem; color:rgba(255,248,242,0.85);
+}
+.app-promo__phone{ flex:0 0 auto; }
+.phone-mock{
+  width:210px; aspect-ratio:9/18.5; border-radius:34px; padding:10px; background:#111;
+  box-shadow:0 25px 60px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.08);
+}
+.phone-mock img{ width:100%; height:100%; object-fit:cover; border-radius:26px; }
 
 /* ---------- reservation ---------- */
 .reservation__grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:4rem; align-items:start; }
@@ -731,6 +844,8 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
   background-image:url('https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=900&auto=format&fit=crop');
   background-size:cover; background-position:center;
 }
+.contact__card.glass{ background:rgba(255,248,242,0.88); }
+[data-theme="dark"] .contact__card.glass{ background:rgba(18,15,12,0.86); }
 .contact__card h3{ font-size:1.05rem; margin-top:1.4rem; }
 .contact__card h3:first-child{ margin-top:0; }
 .contact__card a{ color:var(--wine); font-weight:500; }
@@ -742,29 +857,71 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
 /* ============================================================
    FOOTER
    ============================================================ */
-.site-footer{ background:var(--ink); color:rgba(245,230,200,0.8); padding-top:5rem; }
-.footer__grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1.3fr; gap:2.5rem; padding-bottom:3rem; border-bottom:1px solid rgba(255,255,255,0.1); }
-.brand__name--footer{ color:#fff; font-size:1.4rem; }
-.footer__brand p{ font-size:.86rem; margin:1rem 0 1.4rem; color:rgba(245,230,200,0.65); }
+.site-footer{
+  background:var(--ink); color:rgba(245,230,200,0.8);
+  padding-top:0; position:relative; overflow:hidden;
+  border-top:2px solid; border-image:linear-gradient(90deg, var(--wine), var(--gold), var(--wine)) 1;
+}
+.footer__pattern{
+  position:absolute; inset:0; z-index:0; opacity:.05; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23F5E6C8' stroke-width='1.4'%3E%3Cpath d='M60 4 L104 32 L104 88 L60 116 L16 88 L16 32 Z'/%3E%3Ccircle cx='60' cy='60' r='30'/%3E%3Cpath d='M60 4 L60 116 M16 32 L104 88 M104 32 L16 88'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+.footer__trust{
+  position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center;
+  padding:2rem 24px; border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.trust-badge{
+  font-size:.78rem; font-weight:500; color:rgba(245,230,200,0.75);
+  border:1px solid rgba(255,255,255,0.14); border-radius:var(--radius-pill); padding:.5em 1.1em;
+  background:rgba(255,255,255,0.03);
+}
+.footer__grid{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1.3fr .85fr .85fr .95fr 1.1fr; gap:2.5rem;
+  padding:3.5rem 24px 3rem; border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.brand__name--footer{ color:#fff; font-size:1.5rem; }
+.footer__brand p{ font-size:.86rem; margin:1rem 0 1.4rem; color:rgba(245,230,200,0.65); max-width:30ch; }
 .social-icons{ display:flex; gap:.7rem; }
 .social-icons a{
   width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.2);
-  display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700;
   transition:all var(--dur-fast) var(--ease);
 }
 .social-icons a:hover{ background:var(--gold); border-color:var(--gold); color:#221600; transform:translateY(-3px); }
-.footer__links h4, .footer__newsletter h4{ color:#fff; font-family:var(--font-body); font-size:.85rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:1.2rem; }
-.footer__links ul{ display:flex; flex-direction:column; gap:.7rem; }
+.footer__links h4, .footer__newsletter h4{
+  color:#fff; font-family:var(--font-display); font-weight:600; font-size:1rem; margin-bottom:1.3rem;
+  position:relative; padding-bottom:.6rem;
+}
+.footer__links h4::after, .footer__newsletter h4::after{
+  content:''; position:absolute; left:0; bottom:0; width:28px; height:2px; background:var(--gold);
+}
+.footer__links ul{ display:flex; flex-direction:column; gap:.8rem; }
 .footer__links a{ font-size:.88rem; color:rgba(245,230,200,0.65); transition:color var(--dur-fast) var(--ease); }
 .footer__links a:hover{ color:var(--gold-light); }
+.footer__visit{ display:flex; flex-direction:column; gap:.8rem; }
+.footer__visit li{ font-size:.85rem; color:rgba(245,230,200,0.65); line-height:1.5; }
+.footer__visit a{ color:rgba(245,230,200,0.65); transition:color var(--dur-fast) var(--ease); }
+.footer__visit a:hover{ color:var(--gold-light); }
 .footer__newsletter p{ font-size:.85rem; color:rgba(245,230,200,0.65); margin-bottom:1rem; }
-#newsletterForm{ display:flex; gap:.5rem; }
+#newsletterForm{ display:flex; gap:.5rem; margin-bottom:1.1rem; }
 #newsletterForm input{
   flex:1; min-width:0; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06);
   border-radius:var(--radius-pill); padding:.7em 1.1em; color:#fff; font-size:.85rem;
 }
 #newsletterForm input::placeholder{ color:rgba(245,230,200,0.4); }
-.footer__bottom{ display:flex; justify-content:space-between; padding:1.6rem 24px; font-size:.78rem; flex-wrap:wrap; gap:.5rem; color:rgba(245,230,200,0.5); }
+.footer__stores{ display:flex; flex-direction:column; gap:.5rem; }
+.store-badge--sm{ font-size:.72rem; padding:.4em .8em; align-self:flex-start; }
+.footer__bottom{
+  position:relative; z-index:1;
+  display:flex; justify-content:space-between; align-items:center; padding:1.6rem 24px;
+  font-size:.78rem; flex-wrap:wrap; gap:.6rem; color:rgba(245,230,200,0.5);
+}
+.footer__bottom p{ margin:0; color:inherit; }
+.footer__bottom-right{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.footer__payments{ color:rgba(245,230,200,0.4); }
+.footer__credit{ margin:0; color:rgba(245,230,200,0.5); }
 
 /* ============================================================
    FLOATING UI
@@ -848,6 +1005,9 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
 }
 .modal.is-open .modal__panel{ transform:translateY(0) scale(1); opacity:1; }
 .modal__panel--wide{ max-width:800px; padding:0; overflow:hidden; }
+.modal__panel--video{ max-width:900px; padding:0; overflow:hidden; background:#000; line-height:0; }
+.modal__panel--video video{ width:100%; max-height:80vh; display:block; }
+.modal__panel--video .modal__close{ background:rgba(0,0,0,0.55); color:#fff; }
 .modal__close{
   position:absolute; top:1.2rem; right:1.2rem; width:36px; height:36px; border-radius:50%;
   background:var(--surface-2); border:none; font-size:1.3rem; color:var(--text); z-index:2;
@@ -908,6 +1068,13 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   .quick-view{ grid-template-columns:1fr; }
   .quick-view__img{ aspect-ratio:16/9; }
   .footer__grid{ grid-template-columns:1fr 1fr; }
+  .chef-video__grid{ grid-template-columns:1fr; gap:2rem; }
+  .chef-video__player{ aspect-ratio:16/9; }
+  .tech__grid{ grid-template-columns:repeat(2,1fr); }
+  .partners__grid{ grid-template-columns:repeat(2,1fr); }
+  .app-promo__inner{ justify-content:center; text-align:center; }
+  .app-promo__form{ justify-content:center; }
+  .store-badges{ justify-content:center; }
 }
 
 @media (max-width: 840px){
@@ -915,7 +1082,6 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   .hamburger{ display:flex; }
   .site-header__actions{ gap:.4rem; }
   .sticky-order-btn{ display:flex; }
-  .gallery__masonry{ column-count:2; }
 }
 
 @media (max-width: 620px){
@@ -923,12 +1089,15 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   .footer__grid{ grid-template-columns:1fr; gap:2.2rem; }
   .form-row{ flex-direction:column; }
   .field--sm{ flex:1; }
-  .gallery__masonry{ column-count:1; }
   .offers__inner{ flex-direction:column; align-items:flex-start; }
   .hero__stats{ gap:1.6rem; }
   .about__img--float{ right:0; bottom:-6%; }
   .whatsapp-fab{ width:48px; height:48px; bottom:90px; }
   .back-to-top{ bottom:90px; }
+  .tech__grid{ grid-template-columns:1fr; }
+  .partners__grid{ grid-template-columns:1fr; }
+  .app-promo__form{ flex-direction:column; }
+  .app-promo__form input{ min-width:0; }
 }
 </style>
 </head>
@@ -1023,6 +1192,7 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
       <div class="ember-field" id="emberField" aria-hidden="true"></div>
       <div class="hero__arch" aria-hidden="true"></div>
     </div>
+    <div class="hero__tint" aria-hidden="true"></div>
 
     <div class="container hero__content">
       <p class="eyebrow reveal-up">Muscat, Oman · Est. 2015</p>
@@ -1031,13 +1201,6 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
       <div class="hero__cta reveal-up" data-delay="3">
         <a href="#menu" class="btn btn--primary btn--lg">Order Now</a>
         <a href="#reservation" class="btn btn--ghost btn--lg">Reserve a Table</a>
-      </div>
-
-      <div class="hero__stats reveal-up" data-delay="4">
-        <div class="stat"><span class="stat__num" data-count="9">0</span><span class="stat__label">Years of Fire</span></div>
-        <div class="stat"><span class="stat__num" data-count="128">0</span><span class="stat__label">Spice Blends</span></div>
-        <div class="stat"><span class="stat__num" data-count="42000">0</span><span class="stat__label">Plates Served</span></div>
-        <div class="stat"><span class="stat__num" data-count="4" data-decimal="9">0</span><span class="stat__label">Average Rating</span></div>
       </div>
     </div>
 
@@ -1054,6 +1217,26 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
       <span>Tandoor Fired</span><span>•</span><span>Slow Cooked Biryani</span><span>•</span><span>Stone-Ground Spice</span><span>•</span><span>Omani Hospitality</span><span>•</span><span>Fresh Daily</span><span>•</span>
     </div>
   </div>
+
+  <!-- ============ MILESTONES / 9 YEARS OF EXCELLENCE ============ -->
+  <section class="milestones" id="milestones">
+    <div class="milestones__bg" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=1600&auto=format&fit=crop" alt="" loading="lazy">
+    </div>
+    <div class="container milestones__inner">
+      <div class="milestones__head reveal-up">
+        <p class="eyebrow eyebrow--light">Our Journey</p>
+        <h2>9 Years of Excellence</h2>
+        <p>Nine years of the same clay tandoor, the same family recipes, and a dining room that's grown without ever cutting a corner.</p>
+      </div>
+      <div class="hero__stats">
+        <div class="stat reveal-up" data-delay="1"><span class="stat__num" data-count="9">0</span><span class="stat__label">Years of Fire</span></div>
+        <div class="stat reveal-up" data-delay="2"><span class="stat__num" data-count="128">0</span><span class="stat__label">Spice Blends</span></div>
+        <div class="stat reveal-up" data-delay="3"><span class="stat__num" data-count="42000">0</span><span class="stat__label">Plates Served</span></div>
+        <div class="stat reveal-up" data-delay="4"><span class="stat__num" data-count="4" data-decimal="9">0</span><span class="stat__label">Average Rating</span></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ ABOUT ============ -->
   <section class="about" id="about">
@@ -1128,6 +1311,49 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
     </div>
   </section>
 
+  <!-- ============ CHEF VIDEO ============ -->
+  <section class="chef-video" id="chef-video">
+    <div class="container chef-video__grid">
+      <div class="chef-video__copy reveal-up">
+        <p class="eyebrow">Behind The Fire</p>
+        <h2>Watch our chefs work the tandoor</h2>
+        <p>From dawn spice-grinding to the final char, step into the kitchen and see exactly how a Thali &amp; Beyond plate comes together — no shortcuts, no rushing.</p>
+        <ul class="chef-video__facts">
+          <li>Filmed in our Al Khuwair kitchen</li>
+          <li>Updated every season with new dishes</li>
+        </ul>
+      </div>
+      <button class="chef-video__player reveal-scale" id="chefVideoPlay" aria-label="Play kitchen video">
+        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=900&auto=format&fit=crop" alt="Chef tending the tandoor" loading="lazy">
+        <span class="chef-video__play-btn">▶</span>
+        <span class="chef-video__label">Watch — 1:42</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ CALL TO ACTION ============ -->
+  <section class="cta-banner" id="cta-order">
+    <div class="cta-banner__bg" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=1800&auto=format&fit=crop" alt="" loading="lazy">
+    </div>
+    <div class="container cta-banner__inner reveal-scale">
+      <p class="eyebrow eyebrow--light">Hungry Yet?</p>
+      <h2>Your table — or your tandoor feast — is one tap away</h2>
+      <p>Order online for delivery in under 35 minutes, or reserve a table and let us take care of the rest.</p>
+      <div class="cta-banner__actions">
+        <a href="#menu" class="btn btn--primary btn--lg">Order Now</a>
+        <a href="#reservation" class="btn btn--ghost btn--lg">Reserve a Table</a>
+      </div>
+      <div class="cta-banner__meta">
+        <span>★ 4.9 average rating</span>
+        <span>•</span>
+        <span>25–35 min delivery</span>
+        <span>•</span>
+        <span>Open daily till 11 PM</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ MENU ============ -->
   <section class="menu-section" id="menu">
     <div class="container">
@@ -1188,6 +1414,39 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
     </div>
     <div class="popular__track-wrap">
       <div class="popular__track" id="popularTrack"></div>
+    </div>
+  </section>
+
+  <!-- ============ TRADITION & MODERN TECH ============ -->
+  <section class="tech" id="tradition-tech">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow reveal-up">Old Ways, New Tools</p>
+        <h2 class="reveal-up" data-delay="1">Tradition in the kitchen, technology at the table</h2>
+        <p class="section-sub reveal-up" data-delay="2">The tandoor hasn't changed since 2015. Everything around it has — for your convenience, not the chef's.</p>
+      </div>
+      <div class="tech__grid">
+        <article class="why-card reveal-up" data-delay="1">
+          <div class="why-card__icon">🔥</div>
+          <h3>Wood &amp; Coal, Untouched</h3>
+          <p>Every tandoor is still fired the traditional way — no electric substitutes, no shortcuts.</p>
+        </article>
+        <article class="why-card reveal-up" data-delay="2">
+          <div class="why-card__icon">🖥️</div>
+          <h3>Live Kitchen Display</h3>
+          <p>Your order hits our kitchen screens the second you check out — no paper tickets, no lag.</p>
+        </article>
+        <article class="why-card reveal-up" data-delay="3">
+          <div class="why-card__icon">📦</div>
+          <h3>Real-Time Order Tracking</h3>
+          <p>Know exactly when your food is prepped, packed, and out for delivery.</p>
+        </article>
+        <article class="why-card reveal-up" data-delay="4">
+          <div class="why-card__icon">💳</div>
+          <h3>Contactless Payments</h3>
+          <p>Tap to pay at the table or online, backed by the same secure checkout as our website.</p>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -1259,8 +1518,19 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
               <div><strong>Vikram &amp; Priya</strong><small>Anniversary dinner</small></div>
             </div>
           </article>
+          <article class="t-card glass">
+            <div class="t-card__stars">★★★★★</div>
+            <p>“Coming from Kerala, I'm particular about biryani — this is the first place in Muscat that gets the dum right.”</p>
+            <div class="t-card__person">
+              <img src="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?q=80&w=200&auto=format&fit=crop" alt="Portrait of Arjun P.">
+              <div><strong>Arjun P.</strong><small>Weekly regular</small></div>
+            </div>
+          </article>
         </div>
-        <div class="t-dots" id="tDots"></div>
+        <div class="t-slider__nav">
+          <button class="carousel-btn carousel-btn--light" id="tPrev" aria-label="Previous review">←</button>
+          <button class="carousel-btn carousel-btn--light" id="tNext" aria-label="Next review">→</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1268,18 +1538,84 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   <!-- ============ GALLERY ============ -->
   <section class="gallery" id="gallery">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow reveal-up">Gallery</p>
-        <h2 class="reveal-up" data-delay="1">A closer look at the fire</h2>
+      <div class="section-head section-head--split">
+        <div>
+          <p class="eyebrow reveal-up">Gallery</p>
+          <h2 class="reveal-up" data-delay="1">A closer look at the fire</h2>
+        </div>
+        <div class="popular__nav">
+          <button class="carousel-btn carousel-btn--light" id="galPrev" aria-label="Previous photo">←</button>
+          <button class="carousel-btn carousel-btn--light" id="galNext" aria-label="Next photo">→</button>
+        </div>
       </div>
     </div>
-    <div class="gallery__masonry container" id="galleryGrid">
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Tandoor platter smoking on the pass"></button>
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Biryani being opened tableside"></button>
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Assorted curries on a brass thali"></button>
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Warm dining room interior"></button>
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Fresh spice blends"></button>
-      <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1567337710282-00832b415979?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1567337710282-00832b415979?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Chef plating a dessert"></button>
+    <div class="gallery__track-wrap">
+      <div class="gallery__track" id="galleryGrid">
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Tandoor platter smoking on the pass"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Biryani being opened tableside"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Assorted curries on a brass thali"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Warm dining room interior"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Fresh spice blends"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1567337710282-00832b415979?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1567337710282-00832b415979?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Chef plating a dessert"></button>
+        <button class="gallery__item reveal-up" data-full="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=1400&auto=format&fit=crop"><img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=600&auto=format&fit=crop" loading="lazy" alt="Chef tending the coal tandoor"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DELIVERY PARTNERS ============ -->
+  <section class="delivery-partners" id="delivery">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow reveal-up">Order Anywhere</p>
+        <h2 class="reveal-up" data-delay="1">Find us on your favourite delivery app</h2>
+        <p class="section-sub reveal-up" data-delay="2">Prefer a delivery platform? We're live on the major apps across Muscat, alongside our own fleet for the fastest, hottest delivery.</p>
+      </div>
+      <div class="partners__grid">
+        <a href="#" class="partner-badge reveal-up" data-delay="1">
+          <span class="partner-badge__icon">🛵</span>
+          <strong>Talabat</strong>
+          <small>25–35 min avg</small>
+        </a>
+        <a href="#" class="partner-badge reveal-up" data-delay="2">
+          <span class="partner-badge__icon">🚗</span>
+          <strong>Carriage</strong>
+          <small>Live order tracking</small>
+        </a>
+        <a href="#menu" class="partner-badge reveal-up" data-delay="3">
+          <span class="partner-badge__icon">🏍️</span>
+          <strong>Own Fleet</strong>
+          <small>Direct &amp; fastest</small>
+        </a>
+        <a href="tel:+96891234567" class="partner-badge reveal-up" data-delay="4">
+          <span class="partner-badge__icon">📞</span>
+          <strong>Call &amp; Order</strong>
+          <small>+968 9123 4567</small>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APP DOWNLOAD ============ -->
+  <section class="app-promo" id="app">
+    <div class="container app-promo__inner reveal-scale">
+      <div class="app-promo__copy">
+        <p class="eyebrow eyebrow--light">Coming Soon</p>
+        <h2>The Thali &amp; Beyond app</h2>
+        <p>Faster reordering, saved addresses, and app-only offers — launching soon on iOS and Android. Leave your email and we'll let you know the day it drops.</p>
+        <form class="app-promo__form" id="appNotifyForm">
+          <input type="email" required placeholder="you@example.com" aria-label="Email address">
+          <button type="submit" class="btn btn--primary">Notify Me</button>
+        </form>
+        <div class="store-badges">
+          <span class="store-badge">🍎 App Store — Coming Soon</span>
+          <span class="store-badge">▶ Google Play — Coming Soon</span>
+        </div>
+      </div>
+      <div class="app-promo__phone reveal-up" data-delay="1">
+        <div class="phone-mock">
+          <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?q=80&w=500&auto=format&fit=crop" alt="Preview of the upcoming Thali & Beyond app">
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1362,14 +1698,24 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
 
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer">
+  <div class="footer__pattern" aria-hidden="true"></div>
+
+  <div class="container footer__trust">
+    <span class="trust-badge">🔥 Real Coal Tandoor</span>
+    <span class="trust-badge">🕌 Halal Certified</span>
+    <span class="trust-badge">🔒 Secure Checkout</span>
+    <span class="trust-badge">🛵 25–35 Min Delivery</span>
+  </div>
+
   <div class="container footer__grid">
     <div class="footer__brand">
       <span class="brand__name brand__name--footer">Thali<em>&amp;</em>Beyond</span>
-      <p>A modern Indian kitchen built around the tandoor. Slow fire, hand-ground spice, honest hospitality.</p>
+      <p>A modern Indian kitchen with an Omani welcome. Slow fire, hand-ground spice, honest hospitality — in the heart of Muscat.</p>
       <div class="social-icons">
         <a href="#" aria-label="Instagram">IG</a>
         <a href="#" aria-label="Facebook">FB</a>
         <a href="#" aria-label="X / Twitter">X</a>
+        <a href="https://wa.me/96891234567" aria-label="WhatsApp">WA</a>
       </div>
     </div>
 
@@ -1378,6 +1724,7 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
       <ul>
         <li><a href="#about">Our Story</a></li>
         <li><a href="#menu">Menu</a></li>
+        <li><a href="#chef-video">Behind The Fire</a></li>
         <li><a href="#reservation">Reservations</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -1393,6 +1740,15 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
       </ul>
     </div>
 
+    <div class="footer__links">
+      <h4>Visit Us</h4>
+      <ul class="footer__visit">
+        <li>Way 3018, Al Khuwair<br>Muscat, Oman</li>
+        <li><a href="tel:+96891234567">+968 9123 4567</a></li>
+        <li>Daily, 12:00 PM – 11:00 PM</li>
+      </ul>
+    </div>
+
     <div class="footer__newsletter">
       <h4>Newsletter</h4>
       <p>Menu drops and Sunday-only offers, once or twice a month.</p>
@@ -1400,12 +1756,19 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
         <input type="email" required placeholder="you@example.com" aria-label="Email address">
         <button type="submit" class="btn btn--primary btn--sm">Join</button>
       </form>
+      <div class="footer__stores">
+        <span class="store-badge store-badge--sm">🍎 App Store</span>
+        <span class="store-badge store-badge--sm">▶ Google Play</span>
+      </div>
     </div>
   </div>
 
   <div class="container footer__bottom">
     <p>&copy; <span id="year"></span> Thali &amp; Beyond. All rights reserved.</p>
-    <p class="footer__credit">Built as a headless WooCommerce experience.</p>
+    <div class="footer__bottom-right">
+      <span class="footer__payments">Cash · Card · Online Payment</span>
+      <p class="footer__credit">Built as a headless WooCommerce experience.</p>
+    </div>
   </div>
 </footer>
 
@@ -1450,6 +1813,17 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   </div>
 </aside>
 <div class="scrim" id="cartScrim"></div>
+
+<!-- ============ CHEF VIDEO MODAL ============ -->
+<div class="modal" id="videoModal" aria-hidden="true">
+  <div class="modal__panel modal__panel--video" role="dialog" aria-modal="true" aria-label="Kitchen video">
+    <button class="modal__close" id="videoModalClose" aria-label="Close">&times;</button>
+    <video id="chefVideo" controls playsinline poster="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=1200&auto=format&fit=crop">
+      <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+      Your browser doesn't support embedded video.
+    </video>
+  </div>
+</div>
 
 <!-- ============ QUICK VIEW MODAL ============ -->
 <div class="modal" id="quickViewModal" aria-hidden="true">
@@ -1712,6 +2086,8 @@ async function init() {
   setupGalleryLightbox();
   setupReservationForm();
   setupNewsletterForm();
+  setupChefVideoModal();
+  setupAppNotifyForm();
   setupCartUI();
   setupQuickViewModal();
   setupCheckoutModal();
@@ -2050,27 +2426,43 @@ function setupCoupon() {
    ============================================================ */
 function setupTestimonialSlider() {
   const track = document.getElementById('tTrack');
-  const cards = track.children.length;
-  const dotsWrap = document.getElementById('tDots');
-  let index = 0;
-
-  for (let i = 0; i < cards; i++) {
-    const dot = document.createElement('button');
-    if (i === 0) dot.classList.add('is-active');
-    dot.addEventListener('click', () => goTo(i));
-    dotsWrap.appendChild(dot);
-  }
-
-  function goTo(i) {
-    index = (i + cards) % cards;
-    track.style.transform = `translateX(-${index * 100}%)`;
-    [...dotsWrap.children].forEach((d, di) => d.classList.toggle('is-active', di === index));
-  }
-
-  let autoplay = setInterval(() => goTo(index + 1), 5500);
   const slider = document.getElementById('tSlider');
-  slider.addEventListener('mouseenter', () => clearInterval(autoplay));
-  slider.addEventListener('mouseleave', () => (autoplay = setInterval(() => goTo(index + 1), 5500)));
+  const prevBtn = document.getElementById('tPrev');
+  const nextBtn = document.getElementById('tNext');
+  if (!track) return;
+
+  const cardGap = 26; // matches the 1.6rem gap in CSS
+  const step = () => (track.querySelector('.t-card')?.offsetWidth || 400) + cardGap;
+
+  function atEnd() {
+    return track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  }
+
+  function advance() {
+    if (atEnd()) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: step(), behavior: 'smooth' });
+    }
+  }
+  function reverse() {
+    if (track.scrollLeft <= 4) {
+      track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: -step(), behavior: 'smooth' });
+    }
+  }
+
+  nextBtn?.addEventListener('click', advance);
+  prevBtn?.addEventListener('click', reverse);
+
+  let autoplay = setInterval(advance, 4200);
+  const pause = () => clearInterval(autoplay);
+  const resume = () => { clearInterval(autoplay); autoplay = setInterval(advance, 4200); };
+  slider.addEventListener('mouseenter', pause);
+  slider.addEventListener('mouseleave', resume);
+  track.addEventListener('touchstart', pause, { passive: true });
+  track.addEventListener('touchend', resume, { passive: true });
 }
 
 /* ============================================================
@@ -2097,6 +2489,10 @@ function setupGalleryLightbox() {
   closeBtn.addEventListener('click', close);
   lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  const wrap = document.querySelector('.gallery__track-wrap');
+  document.getElementById('galPrev')?.addEventListener('click', () => wrap.scrollBy({ left: -360, behavior: 'smooth' }));
+  document.getElementById('galNext')?.addEventListener('click', () => wrap.scrollBy({ left: 360, behavior: 'smooth' }));
 }
 
 /* ============================================================
@@ -2131,6 +2527,44 @@ function setupNewsletterForm() {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     showToast("You're on the list!", 'success');
+    form.reset();
+  });
+}
+
+/* ============================================================
+   22b. CHEF VIDEO MODAL
+   ============================================================ */
+function setupChefVideoModal() {
+  const playBtn = document.getElementById('chefVideoPlay');
+  const modal = document.getElementById('videoModal');
+  const closeBtn = document.getElementById('videoModalClose');
+  const video = document.getElementById('chefVideo');
+  if (!playBtn || !modal) return;
+
+  function close() {
+    video.pause();
+    video.currentTime = 0;
+    closeModal(modal);
+  }
+
+  playBtn.addEventListener('click', () => {
+    openModal(modal);
+    video.play().catch(() => {});
+  });
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('is-open')) close(); });
+}
+
+/* ============================================================
+   22c. APP DOWNLOAD NOTIFY FORM
+   ============================================================ */
+function setupAppNotifyForm() {
+  const form = document.getElementById('appNotifyForm');
+  if (!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast("We'll email you the moment the app launches", 'success');
     form.reset();
   });
 }
