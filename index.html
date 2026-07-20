@@ -288,6 +288,68 @@ p{ margin:0 0 1em; color:var(--text-muted); }
 @keyframes bump{ 0%{transform:scale(1);} 40%{transform:scale(1.4);} 100%{transform:scale(1);} }
 
 .nav-order-btn{ margin-left:.4rem; }
+
+/* ---------- user account menu ---------- */
+.user-menu{ position:relative; }
+.user-menu__dot{
+  position:absolute; top:1px; right:1px; width:9px; height:9px; border-radius:50%;
+  background:#2e9c4f; border:2px solid var(--ink); display:none;
+}
+.site-header.is-scrolled .user-menu__dot{ border-color:var(--surface); }
+.user-menu.is-logged-in .user-menu__dot{ display:block; }
+
+.user-menu__dropdown{
+  position:absolute; top:calc(100% + 10px); right:0; min-width:230px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg); padding:.5rem; z-index:950;
+  opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), visibility var(--dur-fast) var(--ease);
+}
+.user-menu:hover .user-menu__dropdown,
+.user-menu.is-open .user-menu__dropdown{ opacity:1; visibility:visible; transform:translateY(0); }
+
+.user-menu__who{
+  display:flex; align-items:center; gap:.7rem; padding:.5rem .7rem .8rem;
+  border-bottom:1px solid var(--border); margin-bottom:.4rem;
+}
+.user-menu__who strong{ display:block; font-size:.9rem; color:var(--text); }
+.user-menu__who small{ display:block; color:var(--text-muted); font-size:.74rem; }
+.user-menu__avatar{
+  flex:0 0 auto; width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg, var(--gold-light), var(--wine)); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700;
+}
+.user-menu__item{
+  display:flex; align-items:center; gap:.65rem; width:100%; text-align:left;
+  padding:.65em .8em; border-radius:var(--radius-sm); border:none; background:none;
+  color:var(--text); font-size:.86rem; font-weight:500; transition:background var(--dur-fast) var(--ease);
+}
+.user-menu__item:hover{ background:var(--surface-2); }
+.user-menu__item--danger{ color:var(--wine); }
+.user-menu__item--danger:hover{ background:rgba(139,0,0,0.08); }
+
+.mobile-nav__account{ border-top:1px solid var(--border); padding-top:1.4rem; margin-top:.4rem; }
+.mobile-nav__account .user-menu__who{ border-bottom:none; padding:0 0 .8rem; }
+
+/* auth / account modal content */
+.modal__switch{ text-align:center; font-size:.85rem; color:var(--text-muted); margin-top:1.2rem; }
+.modal__switch button{ background:none; border:none; color:var(--wine); font-weight:600; padding:0; }
+.account-summary{ display:flex; align-items:center; gap:1rem; margin-bottom:1.4rem; }
+.account-avatar{
+  width:56px; height:56px; border-radius:50%; flex:0 0 auto;
+  background:linear-gradient(135deg, var(--gold-light), var(--wine)); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.4rem; font-weight:700;
+}
+.account-summary strong{ display:block; font-size:1.1rem; }
+.account-summary small{ color:var(--text-muted); font-size:.85rem; }
+.account-detail-row{
+  display:flex; justify-content:space-between; padding:.7em 0; border-bottom:1px solid var(--border);
+  font-size:.88rem; color:var(--text-muted);
+}
+.account-detail-row span:last-child{ color:var(--text); font-weight:500; }
+.account-section{ margin:1.4rem 0; }
+.account-section h4{ font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:.6rem; }
+.account-empty{ font-size:.88rem; color:var(--text-muted); background:var(--surface-2); border-radius:var(--radius-sm); padding:1rem; text-align:center; }
 .hamburger{
   display:none; width:40px; height:40px; border:none; background:transparent;
   flex-direction:column; align-items:center; justify-content:center; gap:5px;
@@ -1161,6 +1223,46 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
         <span class="cart-badge" id="cartBadge">0</span>
       </button>
       <a href="#menu" class="btn btn--primary btn--sm nav-order-btn">Order Now</a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="icon-btn user-menu__trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.6" stroke="currentColor" stroke-width="2"/><path d="M4.5 19.2c1.4-3.4 4.3-5.2 7.5-5.2s6.1 1.8 7.5 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="user-menu__dot" id="userMenuDot" aria-hidden="true"></span>
+        </button>
+
+        <div class="user-menu__dropdown" id="userMenuDropdown" role="menu">
+          <div class="user-menu__who" id="userMenuWho" hidden>
+            <div class="user-menu__avatar" id="userMenuAvatar">?</div>
+            <div>
+              <strong id="userMenuName">—</strong>
+              <small id="userMenuEmail">—</small>
+            </div>
+          </div>
+
+          <div id="userMenuLoggedOut">
+            <button class="user-menu__item" data-action="login" role="menuitem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Login
+            </button>
+            <button class="user-menu__item" data-action="signup" role="menuitem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.4" stroke="currentColor" stroke-width="2"/><path d="M2.5 19c1.2-3 3.6-4.6 6.5-4.6s5.3 1.6 6.5 4.6M17 8h5M19.5 5.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Create Profile
+            </button>
+          </div>
+
+          <div id="userMenuLoggedIn" hidden>
+            <button class="user-menu__item" data-action="account" role="menuitem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.6" stroke="currentColor" stroke-width="2"/><path d="M4.5 19.2c1.4-3.4 4.3-5.2 7.5-5.2s6.1 1.8 7.5 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              My Account
+            </button>
+            <button class="user-menu__item user-menu__item--danger" data-action="logout" role="menuitem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M10 17l-5-5 5-5M5 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -1188,6 +1290,24 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="#menu" class="btn btn--primary btn--block">Order Now</a>
+
+  <div class="mobile-nav__account" id="mobileNavAccount">
+    <div class="user-menu__who" id="mobileUserWho" hidden>
+      <div class="user-menu__avatar" id="mobileUserAvatar">?</div>
+      <div>
+        <strong id="mobileUserName">—</strong>
+        <small id="mobileUserEmail">—</small>
+      </div>
+    </div>
+    <div id="mobileLoggedOut">
+      <button class="user-menu__item" data-action="login" role="menuitem">Login</button>
+      <button class="user-menu__item" data-action="signup" role="menuitem">Create Profile</button>
+    </div>
+    <div id="mobileLoggedIn" hidden>
+      <button class="user-menu__item" data-action="account" role="menuitem">My Account</button>
+      <button class="user-menu__item user-menu__item--danger" data-action="logout" role="menuitem">Logout</button>
+    </div>
+  </div>
 </div>
 <div class="scrim" id="scrim"></div>
 
@@ -1789,7 +1909,7 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
     <p>&copy; <span id="year"></span> Thali &amp; Beyond. All rights reserved.</p>
     <div class="footer__bottom-right">
       <span class="footer__payments">Cash · Card · Online Payment</span>
-      <p class="footer__credit">Built as a headless WooCommerce experience.</p>
+      <p class="footer__credit">Crafted with &lt;3 in India</p>
     </div>
   </div>
 </footer>
@@ -1835,6 +1955,80 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
   </div>
 </aside>
 <div class="scrim" id="cartScrim"></div>
+
+<!-- ============ LOGIN MODAL ============ -->
+<div class="modal" id="loginModal" aria-hidden="true">
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Login">
+    <button class="modal__close" id="loginModalClose" aria-label="Close">&times;</button>
+    <h3>Welcome back</h3>
+    <p class="modal__sub">Log in to see your saved details and past orders.</p>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Log In</button>
+      <p class="form-note" id="loginError" aria-live="polite"></p>
+    </form>
+    <p class="modal__switch">New here? <button type="button" id="switchToSignup">Create a profile</button></p>
+  </div>
+</div>
+
+<!-- ============ SIGNUP / CREATE PROFILE MODAL ============ -->
+<div class="modal" id="signupModal" aria-hidden="true">
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Create profile">
+    <button class="modal__close" id="signupModalClose" aria-label="Close">&times;</button>
+    <h3>Create your profile</h3>
+    <p class="modal__sub">Save your details for faster checkout next time.</p>
+    <form id="signupForm" novalidate>
+      <div class="field">
+        <label for="signupName">Full name</label>
+        <input type="text" id="signupName" required placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" required placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="signupPhone">Phone</label>
+        <input type="tel" id="signupPhone" placeholder="9XXX XXXX">
+      </div>
+      <div class="field">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required minlength="4" placeholder="At least 4 characters">
+      </div>
+      <button type="submit" class="btn btn--primary btn--block">Create Profile</button>
+      <p class="form-note" id="signupError" aria-live="polite"></p>
+    </form>
+    <p class="modal__switch">Already have a profile? <button type="button" id="switchToLogin">Log in</button></p>
+  </div>
+</div>
+
+<!-- ============ MY ACCOUNT MODAL ============ -->
+<div class="modal" id="accountModal" aria-hidden="true">
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-label="My account">
+    <button class="modal__close" id="accountModalClose" aria-label="Close">&times;</button>
+    <h3>My Account</h3>
+    <div class="account-summary">
+      <div class="account-avatar" id="accountAvatar">?</div>
+      <div>
+        <strong id="accountName">—</strong>
+        <small id="accountEmail">—</small>
+      </div>
+    </div>
+    <div class="account-detail-row"><span>Phone</span><span id="accountPhone">—</span></div>
+    <div class="account-detail-row"><span>Member since</span><span id="accountSince">—</span></div>
+    <div class="account-section">
+      <h4>Recent Orders</h4>
+      <p class="account-empty">No orders yet — your next order will show up here.</p>
+    </div>
+    <button class="btn btn--outline btn--block" id="accountLogoutBtn">Log Out</button>
+  </div>
+</div>
 
 <!-- ============ CHEF VIDEO MODAL ============ -->
 <div class="modal" id="videoModal" aria-hidden="true">
@@ -2101,6 +2295,8 @@ async function init() {
   setupHeroParallax();
   setupRevealAnimations();
   setupScrollSpy();
+  setupUserMenu();
+  setupAuthModals();
   setupCounters();
   setupMarqueeFooterLinks();
   setupOffersTimer();
@@ -2950,6 +3146,12 @@ function setupCartUI() {
     document.getElementById('checkoutFormWrap').hidden = false;
     document.getElementById('checkoutSuccess').hidden = true;
     document.getElementById('checkoutTotal').textContent = fmt(cartTotals().total);
+    const user = getCurrentUser();
+    if (user) {
+      document.getElementById('coName').value = user.name || '';
+      document.getElementById('coEmail').value = user.email || '';
+      document.getElementById('coPhone').value = user.phone || '';
+    }
     openModal(document.getElementById('checkoutModal'));
   });
 }
@@ -3034,7 +3236,184 @@ function setupCheckoutModal() {
 }
 
 /* ============================================================
-   28. TOAST NOTIFICATIONS
+   28. USER ACCOUNTS (client-side demo — see README for production notes)
+   ============================================================ */
+const AUTH_USERS_KEY = 'tb_users';
+const AUTH_SESSION_KEY = 'tb_session';
+
+function loadUsers() {
+  try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveUsers(users) { localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); }
+
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || 'null'); }
+  catch { return null; }
+}
+function setSession(email) { localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ email })); }
+function clearSession() { localStorage.removeItem(AUTH_SESSION_KEY); }
+
+function getCurrentUser() {
+  const session = getSession();
+  if (!session) return null;
+  return loadUsers().find((u) => u.email.toLowerCase() === session.email.toLowerCase()) || null;
+}
+
+// NOT cryptographically secure — this is a client-side demo obfuscation only.
+// A real deployment must authenticate against a real backend (see README).
+function obfuscate(pw) {
+  let hash = 0;
+  for (let i = 0; i < pw.length; i++) hash = (hash * 31 + pw.charCodeAt(i)) >>> 0;
+  return hash.toString(36);
+}
+
+function initials(name) {
+  return name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() || '').join('') || '?';
+}
+
+function renderUserMenuState() {
+  const user = getCurrentUser();
+  const userMenu = document.getElementById('userMenu');
+  const loggedOutBlocks = [document.getElementById('userMenuLoggedOut'), document.getElementById('mobileLoggedOut')];
+  const loggedInBlocks = [document.getElementById('userMenuLoggedIn'), document.getElementById('mobileLoggedIn')];
+  const whoBlocks = [
+    { who: document.getElementById('userMenuWho'), name: document.getElementById('userMenuName'), email: document.getElementById('userMenuEmail'), avatar: document.getElementById('userMenuAvatar') },
+    { who: document.getElementById('mobileUserWho'), name: document.getElementById('mobileUserName'), email: document.getElementById('mobileUserEmail'), avatar: document.getElementById('mobileUserAvatar') },
+  ];
+
+  userMenu.classList.toggle('is-logged-in', !!user);
+  loggedOutBlocks.forEach((el) => { if (el) el.hidden = !!user; });
+  loggedInBlocks.forEach((el) => { if (el) el.hidden = !user; });
+
+  whoBlocks.forEach(({ who, name, email, avatar }) => {
+    if (!who) return;
+    who.hidden = !user;
+    if (user) {
+      name.textContent = user.name;
+      email.textContent = user.email;
+      avatar.textContent = initials(user.name);
+    }
+  });
+
+  if (user) {
+    document.getElementById('accountName').textContent = user.name;
+    document.getElementById('accountEmail').textContent = user.email;
+    document.getElementById('accountAvatar').textContent = initials(user.name);
+    document.getElementById('accountPhone').textContent = user.phone || '—';
+    document.getElementById('accountSince').textContent = user.since || '—';
+  }
+}
+
+function setupUserMenu() {
+  const userMenu = document.getElementById('userMenu');
+  const trigger = document.getElementById('userMenuTrigger');
+  if (!userMenu || !trigger) return;
+
+  const openDropdown = () => { userMenu.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); };
+  const closeDropdown = () => { userMenu.classList.remove('is-open'); trigger.setAttribute('aria-expanded', 'false'); };
+
+  trigger.addEventListener('click', () => {
+    userMenu.classList.contains('is-open') ? closeDropdown() : openDropdown();
+  });
+  document.addEventListener('click', (e) => { if (!userMenu.contains(e.target)) closeDropdown(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDropdown(); });
+
+  // route every "data-action" button (desktop dropdown + mobile drawer) to the right modal/behavior
+  document.querySelectorAll('[data-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      closeDropdown();
+      document.getElementById('mobileNav')?.classList.remove('is-open');
+      document.getElementById('scrim')?.classList.remove('is-open');
+      const action = btn.dataset.action;
+      if (action === 'login') openModal(document.getElementById('loginModal'));
+      if (action === 'signup') openModal(document.getElementById('signupModal'));
+      if (action === 'account') openModal(document.getElementById('accountModal'));
+      if (action === 'logout') {
+        clearSession();
+        renderUserMenuState();
+        showToast('Logged out', 'success');
+      }
+    });
+  });
+
+  renderUserMenuState();
+}
+
+function setupAuthModals() {
+  const loginModal = document.getElementById('loginModal');
+  const signupModal = document.getElementById('signupModal');
+  const accountModal = document.getElementById('accountModal');
+
+  document.getElementById('loginModalClose').addEventListener('click', () => closeModal(loginModal));
+  document.getElementById('signupModalClose').addEventListener('click', () => closeModal(signupModal));
+  document.getElementById('accountModalClose').addEventListener('click', () => closeModal(accountModal));
+  [loginModal, signupModal, accountModal].forEach((modal) => {
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
+  });
+
+  document.getElementById('switchToSignup').addEventListener('click', () => { closeModal(loginModal); openModal(signupModal); });
+  document.getElementById('switchToLogin').addEventListener('click', () => { closeModal(signupModal); openModal(loginModal); });
+
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    const user = loadUsers().find((u) => u.email.toLowerCase() === email);
+
+    if (!user || user.password !== obfuscate(password)) {
+      errorEl.textContent = 'Incorrect email or password.';
+      errorEl.className = 'form-note is-error';
+      return;
+    }
+    errorEl.textContent = '';
+    setSession(user.email);
+    renderUserMenuState();
+    closeModal(loginModal);
+    e.target.reset();
+    showToast(`Welcome back, ${user.name.split(' ')[0]}!`, 'success');
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const errorEl = document.getElementById('signupError');
+    const users = loadUsers();
+
+    if (users.some((u) => u.email.toLowerCase() === email)) {
+      errorEl.textContent = 'An account with this email already exists — try logging in instead.';
+      errorEl.className = 'form-note is-error';
+      return;
+    }
+    errorEl.textContent = '';
+
+    const newUser = {
+      name, email, phone, password: obfuscate(password),
+      since: new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }),
+    };
+    users.push(newUser);
+    saveUsers(users);
+    setSession(newUser.email);
+    renderUserMenuState();
+    closeModal(signupModal);
+    e.target.reset();
+    showToast(`Profile created — welcome, ${name.split(' ')[0]}!`, 'success');
+  });
+
+  document.getElementById('accountLogoutBtn').addEventListener('click', () => {
+    clearSession();
+    renderUserMenuState();
+    closeModal(accountModal);
+    showToast('Logged out', 'success');
+  });
+}
+
+/* ============================================================
+   29. TOAST NOTIFICATIONS
    ============================================================ */
 function showToast(message, type = 'success') {
   const stack = document.getElementById('toastStack');
