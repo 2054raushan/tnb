@@ -141,6 +141,13 @@ p{ margin:0 0 1em; color:var(--text-muted); }
 
 :focus-visible{ outline:2.5px solid var(--gold); outline-offset:3px; border-radius:4px; }
 
+.skip-link{
+  position:fixed; top:-60px; left:12px; z-index:3000;
+  background:var(--ink); color:#fff; padding:.8em 1.4em; border-radius:var(--radius-sm);
+  font-size:.85rem; font-weight:600; transition:top var(--dur-fast) var(--ease);
+}
+.skip-link:focus{ top:12px; }
+
 /* ---------- utility ---------- */
 .eyebrow{
   font-family:var(--font-body);
@@ -258,6 +265,8 @@ p{ margin:0 0 1em; color:var(--text-muted); }
 }
 .nav__list a:hover::after{ width:100%; }
 .nav__list a:hover{ opacity:1; }
+.nav__list a.is-active{ opacity:1; }
+.nav__list a.is-active::after{ width:100%; }
 
 .site-header__actions{ display:flex; align-items:center; gap:.6rem; }
 .icon-btn{
@@ -837,20 +846,26 @@ section{ padding:clamp(4rem, 8vw, 7rem) 0; }
 .contact__grid{ display:grid; grid-template-columns:.8fr 1.2fr; gap:2.4rem; }
 .contact__card{
   position:relative; border-radius:var(--radius-lg); padding:2.4rem; box-shadow:var(--shadow-md);
-  overflow:hidden; isolation:isolate;
+  overflow:hidden; isolation:isolate; color:#fff;
 }
 .contact__card::before{
-  content:''; position:absolute; inset:0; z-index:-1;
+  content:''; position:absolute; inset:0; z-index:-2;
   background-image:url('https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=900&auto=format&fit=crop');
   background-size:cover; background-position:center;
 }
-.contact__card.glass{ background:rgba(255,248,242,0.88); }
-[data-theme="dark"] .contact__card.glass{ background:rgba(18,15,12,0.86); }
-.contact__card h3{ font-size:1.05rem; margin-top:1.4rem; }
+/* dark, semi-transparent layer sandwiched between the photo and the text,
+   so the copy stays clearly legible regardless of what's behind it */
+.contact__card::after{
+  content:''; position:absolute; inset:0; z-index:-1;
+  background:rgba(0,0,0,0.62);
+}
+.contact__card h3{ font-size:1.05rem; margin-top:1.4rem; color:#fff; }
 .contact__card h3:first-child{ margin-top:0; }
-.contact__card a{ color:var(--wine); font-weight:500; }
+.contact__card p{ color:rgba(255,255,255,0.88); }
+.contact__card a{ color:var(--gold-light); font-weight:500; }
+.contact__card a:hover{ color:#fff; }
 .hours{ display:flex; flex-direction:column; gap:.4rem; font-size:.9rem; }
-.hours li{ display:flex; justify-content:space-between; color:var(--text-muted); }
+.hours li{ display:flex; justify-content:space-between; color:rgba(255,255,255,0.82); }
 .contact__map{ border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md); min-height:340px; }
 .contact__map iframe{ width:100%; height:100%; min-height:340px; border:0; filter:grayscale(.15) contrast(1.05); }
 
@@ -1102,6 +1117,7 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
 </style>
 </head>
 <body>
+<a class="skip-link" href="#home">Skip to content</a>
 <!-- ============ PRELOADER ============ -->
 <div class="preloader" id="preloader" aria-hidden="true">
   <div class="preloader__mark">
@@ -1676,6 +1692,12 @@ fieldset.payment-method legend{ font-size:.78rem; font-weight:600; text-transfor
 
   <!-- ============ CONTACT ============ -->
   <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow reveal-up">Visit Us</p>
+        <h2 class="reveal-up" data-delay="1">Come say hello in Al Khuwair</h2>
+      </div>
+    </div>
     <div class="container contact__grid">
       <div class="contact__card glass reveal-up">
         <h3>Visit</h3>
@@ -2078,6 +2100,7 @@ async function init() {
   setupSteamField();
   setupHeroParallax();
   setupRevealAnimations();
+  setupScrollSpy();
   setupCounters();
   setupMarqueeFooterLinks();
   setupOffersTimer();
@@ -2331,6 +2354,31 @@ function setupRevealAnimations() {
     });
   }, { threshold: 0.15 });
   els.forEach((el) => io.observe(el));
+}
+
+/* ---------- scroll-spy: highlight the current section's nav link ---------- */
+function setupScrollSpy() {
+  const navLinks = [...document.querySelectorAll('.nav__list a[href^="#"]')];
+  if (!navLinks.length) return;
+
+  const sections = navLinks
+    .map((link) => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+  if (!sections.length) return;
+
+  const setActive = (id) => {
+    navLinks.forEach((link) => {
+      link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+    });
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach((sec) => io.observe(sec));
 }
 
 /* ============================================================
